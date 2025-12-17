@@ -11,14 +11,10 @@ a Institute of Industrial Science, The University of Tokyo, Meguro, Tokyo 153-85
 
 It contains:
 
-Preprocessing of data
-
-Spike detection
-
-Burst detection
-
-Analysis on burst metrics
-
-Activity correlations
+- Preprocessing of data
+- Spike detection
+- Burst detection
+- Analysis on burst metrics
+- Activity correlations
 
 All analysis were performed using MATLAB 2020a. Example signal trace from a recording can be found and analyzed using the main script main.m to compute the parameters above.
