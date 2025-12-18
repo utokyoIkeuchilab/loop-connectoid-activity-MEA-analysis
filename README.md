@@ -13,8 +13,15 @@ It contains:
 
 - Preprocessing of data
 - Spike detection
-- Burst detection
-- Analysis on burst metrics
-- Activity correlations
+- Plotting of Signals
+- Time frequency analysis
+- Wavelet coherence
+- Frequency separation
 
-All analysis were performed using MATLAB 2020a. Example signal trace from a recording can be found and analyzed using the main script main.m to compute the parameters above.
+
+
+All analysis were performed using MATLAB 2020a. 
+
+
+Example data set:
+Example data can be found in the "Example data" folder which contains a .mat file with 10 min raw signal traces from 4 organoids that were connected at 12 weeks ('example_signal_trace.mat').
