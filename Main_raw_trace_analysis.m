@@ -1,14 +1,16 @@
-%% =========================
-%  Main script
-%  =========================
+%% ============================================================
+%  Main raw trace analysis script
+%  ============================================================
 
 clear all
 close all
 clc
 
-%% =========================
+
+
+%% ============================================================
 %  Set parameters and import data
-%  =========================
+%  ============================================================
 
 Fs=20000; % Sampling frequency
 
@@ -16,9 +18,10 @@ Fs=20000; % Sampling frequency
 signal = struct2array(load('C:\Users\Tomoya\Projects\papers\loop-connectoid-activity-MEA-analysis\example_data\example_signal_trace.mat'));
 
 
-%% =========================
+
+%% ============================================================
 %  Preprocess data
-%  =========================
+%  ============================================================
 
 num_electrode=4;% Number of electrodes (organoids)
 
@@ -32,9 +35,9 @@ time_ms = time*1000; % Convert time to milliseconds
 
 
 
-%% =========================
+%% ============================================================
 %  Spike detection
-%  =========================
+%  ============================================================
 
 % visual_on = 1  → show spike detection plots
 % visual_on = 0  → no visualization
@@ -45,9 +48,11 @@ magnification=4; % % Threshold = magnification × standard deviation
 % Perform spike detection on high-pass filtered data
 [All_spikes_pos, All_spikes_neg, Mean_posspks_amp, Mean_negspks_amp, Num_posspks,Num_negspks, All_interspike_interval_sec, Mean_interspike_interval_sec, All_spikes]=spike_detection(Fs, time_ms, num_electrode, HP_Signal_fix, visual_on, magnification);
 
-%% =========================
+
+
+%% ============================================================
 %  Plot all traces together
-%  =========================
+%  ============================================================
 
 % Define colors for each organoid 
 color1 = [50, 50, 180]/255;
@@ -70,9 +75,9 @@ hold off
 
 
 
-%% =========================
+%% ============================================================
 %  Wavelet transformation of all electrodes
-%  =========================
+%  ============================================================
 
 Downsample_rate=20; % Downsampling factor for wavelet analysis
 dFs = Fs/Downsample_rate; % Effective sampling frequency after downsampling
@@ -83,7 +88,10 @@ t2 = 150; %end time of calculation range (in seconds)
 wavelet_transformation(Fs, time_ms, num_electrode, LP_Signal_fix, Downsample_rate, t1*dFs, t2*dFs);
 
 
-%% Wavelet coherence organoid 1 vs organoid 2
+
+%% ============================================================
+%  Wavelet coherence organoid 1 vs organoid 2
+%  ============================================================
 
 t1 = 1;  %start time of calculation range (in seconds)
 t2 = 301; %end time of calculation range (in seconds)
@@ -95,9 +103,11 @@ DS_time_ms= downsample(time_ms(t1*Fs:t2*Fs), Downsample_rate); % Downsampled tim
 % Compute and plot wavelet coherence
 wavelet_coherence(Fs, time_ms,LP_Signal_fix, Downsample_rate, t1*dFs, t2*dFs, e1, e2, PhaseDisplayThreshold)
 
-%% =========================
+
+
+%% ============================================================
 %  Mean wavelet coherence between all 4 organoids
-%  =========================
+%  ============================================================
 
 DS_LP_Signal= downsample(LP_Signal_fix, Downsample_rate); %downsample signal
 
@@ -129,9 +139,9 @@ hold off
 
 
 
-%% =========================
+%% ============================================================
 %  Plot Different frequency bands
-%  =========================
+%  ============================================================
 
 selel = 1; % Selected electrode
 t1 = 1;  %start time of calculation range (in seconds)
