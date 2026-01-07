@@ -1,26 +1,35 @@
 function []=wavelet_coherence(Fs, time_ms,LP_Signal_fix, Downsample_rate, t1, t2, e1, e2, PhaseDisplayThreshold)
 
-dFs=Fs/Downsample_rate;
-DS_LP_Signal= downsample(LP_Signal_fix, Downsample_rate);
-DS_time_ms= downsample(time_ms, Downsample_rate);
-DS_time_ms_lim= DS_time_ms(t1:t2,:);
+%WAVELET_COHERENCE  Compute and plot wavelet coherence between two electrodes
+%
+%   INPUTS:
+%       Fs                    - Original sampling frequency (Hz)
+%       time_ms               - Time vector (milliseconds)
+%       LP_Signal_fix         - Low-pass filtered signal (<1000 Hz)
+%       Downsample_rate       - Downsampling factor
+%       t1, t2                - Start and end indices (after downsampling)
+%       e1, e2                - Electrode indices to compare
+%       PhaseDisplayThreshold - Coherence threshold for phase arrows
+%
+%   OUTPUT:
+%       Figure generation
+%
+%   Description:
+%       This function downsamples the signals from two electrodes,
+%       and computes their wavelet coherence over a selected time window.
 
-DS_LP_Signal_single_e1=DS_LP_Signal(:, e1);
+dFs=Fs/Downsample_rate; % Effective sampling frequency after downsampling
+DS_LP_Signal= downsample(LP_Signal_fix, Downsample_rate); % Downsample signals
+DS_time_ms= downsample(time_ms, Downsample_rate); % Downsample time vector
+DS_time_ms_lim= DS_time_ms(t1:t2,:); % Limit time vector to analysis window
+
+% Extract signals from selected electrodes
+DS_LP_Signal_single_e1=DS_LP_Signal(:, e1); 
 DS_LP_Signal_single_e2=DS_LP_Signal(:, e2);
 DS_LP_Signal_single_e1_lim= DS_LP_Signal_single_e1(t1:t2,:);
 DS_LP_Signal_single_e2_lim= DS_LP_Signal_single_e2(t1:t2,:);
 
-
-% Calculation range
-% DC removal
-% d = designfilt('bandstopiir','FilterOrder',2, ...
-%                'HalfPowerFrequency1',49,'HalfPowerFrequency2',51, ...
-%                'DesignMethod','butter','SampleRate',Fs);
-%            
-% DCR_LP_Signal = filtfilt(d,DS_LP_Signal);
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-tic 
+% Create figure
     fig1 = figure;
     fig1.PaperUnits      = 'centimeters';
     fig1.Units           = 'centimeters';
@@ -33,13 +42,13 @@ tic
     set(fig1,'defaultAxesXColor','k');
     figure(fig1);
 
+% Compute wavelet coherence
     wcoherence(DS_LP_Signal_single_e1_lim,DS_LP_Signal_single_e2_lim,dFs, 'PhaseDisplayThreshold',PhaseDisplayThreshold);
     ax = gca;
     ytick=round(pow2(ax.YTick),3);
     ax.YTickLabel=ytick;
     ax.YLabel.String='Frequency (Hz)';
     ax.Title.String = 'Wavelet Coherence';
-    % colormap(flipud(hot))
     colormap(jet)
     caxis([0 1.5])
 end

@@ -1,83 +1,107 @@
-%% Main script
+%% =========================
+%  Main script
+%  =========================
+
 clear all
 close all
 clc
 
-%% Set parameters
+%% =========================
+%  Set parameters and import data
+%  =========================
+
 Fs=20000; % Sampling frequency
 
-%% Load and import data
+% Load MATLAB .mat file containing the signal (can be downloaded on Github)
 signal = struct2array(load('C:\Users\Tomoya\Projects\papers\loop-connectoid-activity-MEA-analysis\example_data\example_signal_trace.mat'));
 
 
-%% Preprocess data 
-num_electrode=4;
+%% =========================
+%  Preprocess data
+%  =========================
 
-% filter Signal, LP_Signal_fix = lowpass <1000Hz, HP_Signal_fix = bandpass 300-3000Hz
+num_electrode=4;% Number of electrodes (organoids)
+
+% Filter signals:
+%   LP_Signal_fix : low-pass filtered signal (< 1000 Hz)
+%   HP_Signal_fix : band-pass filtered signal (300–3000 Hz)
 [LP_Signal_fix, HP_Signal_fix]=filter_signal(Fs, num_electrode, signal);
 
-time = [1/Fs:1/Fs:size(signal,1)/Fs]';
-time_ms = time*1000;
-tl=length(time_ms);
+time = [1/Fs:1/Fs:size(signal,1)/Fs]'; % Create time vector (seconds)
+time_ms = time*1000; % Convert time to milliseconds
 
 
-%% Spike detection
-%if you need visuaiztion of spike detection result set visual_on=1
-%otherwise visual_on=0
 
+%% =========================
+%  Spike detection
+%  =========================
+
+% visual_on = 1  → show spike detection plots
+% visual_on = 0  → no visualization
 visual_on=1;
-magnification=4; % magnification *STDEV for spike detection
 
+magnification=4; % % Threshold = magnification × standard deviation
+
+% Perform spike detection on high-pass filtered data
 [All_spikes_pos, All_spikes_neg, Mean_posspks_amp, Mean_negspks_amp, Num_posspks,Num_negspks, All_interspike_interval_sec, Mean_interspike_interval_sec, All_spikes]=spike_detection(Fs, time_ms, num_electrode, HP_Signal_fix, visual_on, magnification);
 
-%% Plot all traces together
+%% =========================
+%  Plot all traces together
+%  =========================
 
+% Define colors for each organoid 
 color1 = [50, 50, 180]/255;
 color2 = [80, 80, 180]/255;
 color3 = [110, 110, 180]/255;
 color4 = [140, 140, 180]/255;
 
-figure('position', [200 100 1500 800]) 
+% Plot low-pass filtered signals with vertical offsets
+figure('position', [200 200 1500 800]) 
 hold on;
 h1 = plot(time, LP_Signal_fix(:,1), 'color', color1);
 h2 = plot(time,LP_Signal_fix(:,2)-0.02,'color', color2);
 h3 = plot(time,LP_Signal_fix(:,3)-0.03,'color', color3);
 h4 = plot(time,LP_Signal_fix(:,4)-0.04,'color', color4);
-
 xlabel('Time (s)'); ylabel('Amplitude (mV)');
 set (gca, 'fontsize', 14, 'fontname','san serif', 'fontweight', 'bold', 'box', 'off', 'linewidth',1.5);
 xlim([50 150])
-
 legend([h1 h2 h3 h4], 'Organoid 1', 'Organoid 2', 'Organoid 3', 'Organoid 4', 'box', 'off')
 hold off
 
 
 
-%% Wavelet transformation of all electrodes
-Downsample_rate=20;
+%% =========================
+%  Wavelet transformation of all electrodes
+%  =========================
+
+Downsample_rate=20; % Downsampling factor for wavelet analysis
+dFs = Fs/Downsample_rate; % Effective sampling frequency after downsampling
 t1 = 50; %start time of calculation range (in seconds)
 t2 = 150; %end time of calculation range (in seconds)
 
-wavelet_transformation(Fs, time_ms, num_electrode, LP_Signal_fix, Downsample_rate, t1*Fs/Downsample_rate, t2*Fs/Downsample_rate);
+% Perform wavelet transform on low-pass data
+wavelet_transformation(Fs, time_ms, num_electrode, LP_Signal_fix, Downsample_rate, t1*dFs, t2*dFs);
 
 
 %% Wavelet coherence organoid 1 vs organoid 2
 
-Downsample_rate=20;
-dFs = Fs/Downsample_rate;
 t1 = 1;  %start time of calculation range (in seconds)
 t2 = 301; %end time of calculation range (in seconds)
 e1=1; %first electrode number
 e2=2; %second electrode number
-PhaseDisplayThreshold=1;
-DS_time_ms= downsample(time_ms(t1*Fs:t2*Fs), Downsample_rate);
+PhaseDisplayThreshold=1; % Hide phase arrows where coherence < threshold
+DS_time_ms= downsample(time_ms(t1*Fs:t2*Fs), Downsample_rate); % Downsampled time vector
 
+% Compute and plot wavelet coherence
+wavelet_coherence(Fs, time_ms,LP_Signal_fix, Downsample_rate, t1*dFs, t2*dFs, e1, e2, PhaseDisplayThreshold)
 
-wavelet_coherence(Fs, time_ms,LP_Signal_fix, Downsample_rate, t1*Fs/Downsample_rate, t2*Fs/Downsample_rate, e1, e2, PhaseDisplayThreshold)
+%% =========================
+%  Mean wavelet coherence between all 4 organoids
+%  =========================
 
-%% Mean wavelet coherence between all 4 organoids
-DS_LP_Signal= downsample(LP_Signal_fix, Downsample_rate);
+DS_LP_Signal= downsample(LP_Signal_fix, Downsample_rate); %downsample signal
 
+% Compute pairwise wavelet coherences
 % wavelet coherence between electrode 1 & 2
 w1 = wcoherence(DS_LP_Signal(t1*dFs:t2*dFs,1),DS_LP_Signal(t1*dFs:t2*dFs,2),dFs, 'PhaseDisplayThreshold',PhaseDisplayThreshold);
 % wavelet coherence between electrode 1 & 3
@@ -88,6 +112,7 @@ w3 = wcoherence(DS_LP_Signal(t1*dFs:t2*dFs,2),DS_LP_Signal(t1*dFs:t2*dFs,4),dFs,
 w4 = wcoherence(DS_LP_Signal(t1*dFs:t2*dFs,3),DS_LP_Signal(t1*dFs:t2*dFs,4),dFs, 'PhaseDisplayThreshold',PhaseDisplayThreshold);
 
 
+% Plot mean coherence across pairs
 figure('position', [500 500 1000 600])
 imagesc((w1+w2+w3+w4)/4);
 colormap(jet)
@@ -103,19 +128,26 @@ set(gca,'TickLength',[0.01, 0.01])
 hold off
 
 
-%% Plot Different frequencies
 
-selel = 1;
+%% =========================
+%  Plot Different frequency bands
+%  =========================
 
-[wt,f] = cwt(DS_LP_Signal(t1*dFs:t2*dFs,selel),dFs);
+selel = 1; % Selected electrode
+t1 = 1;  %start time of calculation range (in seconds)
+t2 = 301; %end time of calculation range (in seconds)
+
+[wt,f] = cwt(DS_LP_Signal(t1*dFs:t2*dFs,selel),dFs); % Continuous wavelet transform
+
+% Reconstruct signals in specific frequency bands
 xrec1 = icwt(wt,f,[0.2 0.5],'SignalMean',mean(DS_LP_Signal(t1*dFs:t2*dFs,selel)));
 xrec2 = icwt(wt,f,[0.5 4],'SignalMean',mean(DS_LP_Signal(t1*dFs:t2*dFs,selel))); %delta
 xrec3 = icwt(wt,f,[4 8],'SignalMean',mean(DS_LP_Signal(t1*dFs:t2*dFs,selel))); %theta
 xrec4 = icwt(wt,f,[8 12],'SignalMean',mean(DS_LP_Signal(t1*dFs:t2*dFs,selel))); %alpha
 xrec5 = icwt(wt,f,[12 30],'SignalMean',mean(DS_LP_Signal(t1*dFs:t2*dFs,selel))); %beta
-xrec6 = icwt(wt,f,[30 300],'SignalMean',mean(DS_LP_Signal(t1*dFs:t2*dFs,selel)));
+xrec6 = icwt(wt,f,[30 300],'SignalMean',mean(DS_LP_Signal(t1*dFs:t2*dFs,selel))); %gamma
   
-%Offset Correction 
+%Offset Correction of reconstructed signals
 xrec1 = xrec1-mean(xrec1);
 xrec2 = xrec2-mean(xrec2);
 xrec3 = xrec3-mean(xrec3);
@@ -123,6 +155,7 @@ xrec4 = xrec4-mean(xrec4);
 xrec5 = xrec5-mean(xrec5);
 xrec6 = xrec6-mean(xrec6);
 
+% Plot raw and reconstructed frequency bands
 figure('position', [200 100 1500 800]) 
 h1 = plot(time_ms(t1*Fs:t2*Fs)/1000, LP_Signal_fix(t1*Fs:t2*Fs, selel), 'Color', [0.75 0.75 0.75]);
 hold on
@@ -139,4 +172,5 @@ ylim([-0.05 0.07])
 xlabel('Time (sec)');
 ylabel('Amplitude (mV)')
 legend([h1 h2 h3 h4 h5 h6], {'Raw' 'Delta' 'Theta' 'Alpha' 'Beta' 'Gamma'}, 'box', 'off')
+hold off
 
