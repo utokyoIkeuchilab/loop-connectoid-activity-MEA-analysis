@@ -23,7 +23,7 @@ It contains the following 3 main scripts:
     - Inter organoid correlation (direct & indirect)
     - Intra organoid correlation
     - Plotting spiking activity and correlation matrix
-  - Burst analysis (Main_burst_analysis.m):
+- Burst analysis (Main_burst_analysis.m):
     - Burst detection
     - Burst frequency
     - Interburst interval
@@ -35,10 +35,12 @@ It contains the following 3 main scripts:
 
   
 Example data set:
+
 Example data can be found in the "Example data" folder which contains a .mat file with 10 min raw signal traces from 4 organoids that were connected and differentiated for 12 weeks ('example_signal_trace.mat'). It also contains a .mat file with extracted spiking activity from 64 electrodes of the same recording (example_spike_data.mat).
 
 
 All analysis were performed using MATLAB 2020a.
+
 Required Toolboxes:
 -  Signal Processing Toolbox
 -  Wavelet Toolbox
