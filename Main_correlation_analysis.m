@@ -72,16 +72,17 @@ correlation = corrcoef([NTL' NTR' NBL' NBR']);
 
 % Selected correlations (direct connections between the 4 organoids)
 intercorrelation = [correlation(1,2); correlation(1,3); correlation(2,4); correlation(3,4)];
+disp('...')
 disp('Inter organoid correlations')
-disp(['Inter organoid correlation (direct connections): ' num2str(correlation(1,2))])
-disp(['Inter organoid correlation (direct connections): ' num2str(correlation(1,3))])
-disp(['Inter organoid correlation (direct connections): ' num2str(correlation(2,4))])
-disp(['Inter organoid correlation (direct connections): ' num2str(correlation(3,4))])
+disp(['Inter organoid correlation (direct connections): ' num2str(correlation(1,2))]);
+disp(['Inter organoid correlation (direct connections): ' num2str(correlation(1,3))]);
+disp(['Inter organoid correlation (direct connections): ' num2str(correlation(2,4))]);
+disp(['Inter organoid correlation (direct connections): ' num2str(correlation(3,4))]);
 
 % Diagonal (indirect) organoid correlations
 indirectcorrelation = [correlation(1,4); correlation(2,3);];
-disp(['Inter organoid correlation (indirect connections): ' num2str(correlation(1,4))])
-disp(['Inter organoid correlation (indirect connections): ' num2str(correlation(2,3))])
+disp(['Inter organoid correlation (indirect connections): ' num2str(correlation(1,4))]);
+disp(['Inter organoid correlation (indirect connections): ' num2str(correlation(2,3))]);
 
 % Plot population activity traces of the 4 organoids
 figure('position', [300 300 1200 600]); hold on;
@@ -158,7 +159,7 @@ disp('Intra organoid correlations')
 % --- Top left organoid ---
 correlation = corrcoef(IntraSpikesTL');
 mean_intra_corr1 = mean([correlation(2,1); correlation(3,1); correlation(3,2)]);
-disp(['Intra correlation top left organoid: ' num2str(mean_intra_corr1)])
+disp(['Intra correlation top left organoid: ' num2str(mean_intra_corr1)]);
 
 % Plot spiking activity of electrodes within organoid 
 figure('position', [300 300 1200 600]); hold on;
@@ -180,7 +181,7 @@ ylabel('Electrode #'); xlabel('Electrode #'); title('Intra Organoid Correlation 
 % --- Top right organoid ---
 correlation = corrcoef(IntraSpikesTR');
 mean_intra_corr2 = mean([correlation(2,1); correlation(3,1); correlation(3,2)]);
-disp(['Intra correlation top right organoid: ' num2str(mean_intra_corr2)])
+disp(['Intra correlation top right organoid: ' num2str(mean_intra_corr2)]);
 
 % Plot spiking activity of electrodes within organoid 
 figure('position', [300 300 1200 600]); hold on;
@@ -203,7 +204,7 @@ ylabel('Electrode #'); xlabel('Electrode #'); title('Intra Organoid Correlation 
 % --- Bottom left organoid ---
 correlation = corrcoef(IntraSpikesBL');
 mean_intra_corr3 = mean([correlation(2,1); correlation(3,1); correlation(3,2)]);
-disp(['Intra correlation bottom left organoid: ' num2str(mean_intra_corr3)])
+disp(['Intra correlation bottom left organoid: ' num2str(mean_intra_corr3)]);
 
 % Plot spiking activity of electrodes within organoid 
 figure('position', [300 300 1200 600]); hold on;
@@ -226,7 +227,7 @@ ylabel('Electrode #'); xlabel('Electrode #'); title('Intra Organoid Correlation 
 % --- Bottom right organoid ---
 correlation = corrcoef(IntraSpikesBR');
 mean_intra_corr4 = mean([correlation(2,1); correlation(3,1); correlation(3,2)]);
-disp(['Intra correlation bottom right organoid: ' num2str(mean_intra_corr4)])
+disp(['Intra correlation bottom right organoid: ' num2str(mean_intra_corr4)]);
 
 % Plot spiking activity of electrodes within organoid 
 figure('position', [300 300 1200 600]); hold on;
