@@ -107,8 +107,7 @@ Characterizes network burst dynamics.
 If you use this code in your work, please cite:
 
 ```
-Duenki T, Ikeuchi Y. Multi-Organoid Loop Cerebral Connectoids Exhibit Enhanced Neuronal
-Network Dynamics and Sequence-Specific Entrainment. [Journal, Year]. DOI: [add DOI]
+Duenki, T., Ikeuchi, Y. Multi-organoid loop cerebral connectoids exhibit enhanced neuronal network dynamics and sequence-specific entrainment. Commun Biol 9, 302 (2026). https://doi.org/10.1038/s42003-026-09589-9
 ```
 
 ---
