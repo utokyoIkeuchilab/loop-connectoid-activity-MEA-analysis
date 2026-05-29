@@ -16,8 +16,8 @@ clc
 %  ============================================================
 
 total_duration = 1200; % Total recording duration (seconds)
-bin_win = 100; % Binning window (ms) for spike counts
-smoothingfactor = 3;  % Gaussian smoothing strength
+bin_win = 10; % Binning window (ms) for spike counts
+smoothingfactor = 1;  % Gaussian smoothing strength
 bin_number = total_duration*1000/bin_win; % Number of bins for the full recording
 time = [total_duration/bin_number:total_duration/bin_number:total_duration];
 
